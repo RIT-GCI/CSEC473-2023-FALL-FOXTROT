@@ -1,0 +1,40 @@
+# vim: set filetype=yaml.ansible:
+---
+- name: Deploy Scorestack
+  hosts: scoring
+  tasks:
+    - name: Setup Scorestack
+      ansible.builtin.include_role:
+        name: linux_deploy_scorestack
+  tags:
+    - never
+    - deploy_scorestack
+
+- name: Deploy dynamicbeat
+  hosts: beat
+  tasks:
+    - name: Setup dynamicbeat
+      ansible.builtin.include_role:
+        name: linux_deploy_dynamicbeat
+  tags:
+    - never
+    - deploy_dynamicbeat
+
+- name: Deploy score checks
+  hosts: beat
+  tags:
+    - deploy_checks
+  tasks:
+    - name: Copy over score checks
+      become: true
+      ansible.builtin.copy:
+        src: scorechecks/
+        dest: /opt/dynamicbeat/checks
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Setup dynamicbeat checks
+      ansible.builtin.command:
+        cmd: /opt/dynamicbeat/dynamicbeat setup checks --config /opt/dynamicbeat/dynamicbeat.yml /opt/dynamicbeat/checks
+      changed_when: true

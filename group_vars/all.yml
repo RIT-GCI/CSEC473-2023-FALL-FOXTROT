@@ -1,0 +1,9 @@
+---
+# Password Info
+greyteam_user: greyteam
+greyteam_password: th3_w@rden_rule$
+
+ansible_password: "{{ greyteam_password }}"
+ansible_user: "{{ greyteam_user }}"
+
+blueteam_password: Change.me123!

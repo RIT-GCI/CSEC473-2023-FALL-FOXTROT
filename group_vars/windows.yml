@@ -1,0 +1,4 @@
+---
+# general windows deploy
+working_dir: 'C:\Temp\Working\Ansible'
+wallpaper_dir: 'C:\Wallpaper'

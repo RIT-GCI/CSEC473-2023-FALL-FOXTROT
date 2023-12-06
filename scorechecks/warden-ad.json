@@ -1,0 +1,21 @@
+{
+  "name": "Warden-AD",
+  "type": "ldap",
+  "score_weight": 1,
+  "definition": {
+    "Fqdn": "{{.Host}}",
+    "User": "{{.User}}@{{.Domain}}",
+    "Password": "{{.Password}}",
+    "Ldaps": "false"
+  },
+  "attributes": {
+    "admin": {
+      "Domain": "team{{.TeamNum}}.prison.gang",
+      "Host": "warden.team{{.TeamNum}}.prison.gang",
+      "User": "prisonguard"
+    },
+    "User": {
+      "Password": "Change.me123!"
+    }
+  }
+}

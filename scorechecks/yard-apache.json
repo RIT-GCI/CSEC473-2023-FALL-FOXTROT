@@ -1,0 +1,27 @@
+{
+  "name": "Yard-Apache",
+  "type": "http",
+  "score_weight": 1,
+  "definition": {
+    "Verify": "false",
+    "Requests": [
+      {
+        "Host": "{{.Host}}",
+        "Path": "{{.Path}}",
+        "HTTPS": false,
+        "Port": 80,
+        "Method": "GET",
+        "Code": 200,
+        "MatchContent": true,
+        "ContentRegex": "{{.Content}}"
+      }
+    ]
+  },
+  "attributes": {
+    "admin": {
+      "Host": "yard.team{{.TeamNum}}.prison.gang",
+      "Path": "/",
+      "Content": ".*"
+    }
+  }
+}

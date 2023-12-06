@@ -1,0 +1,31 @@
+#
+# hosts         This file describes a number of hostname-to-address
+#               mappings for the TCP/IP subsystem.  It is mostly
+#               used at boot time, when no name servers are running.
+#               On small systems, this file can be used instead of a
+#               "named" name server.
+# Syntax:
+#    
+# IP-Address  Full-Qualified-Hostname  Short-Hostname
+#
+
+127.0.0.1	localhost
+
+# grey-net
+10.69.100.10 deploy.prison.gang deploy-prison-gang
+10.69.100.20 scoring.prison.gang scoring-prison-gang
+10.69.100.30 beat.prison.gang beat-prison-gang
+
+# blue01-net
+10.69.10.10 warden.team01.prison.gang warden-team01-prison-gang team01.prison.gang
+10.69.10.11 yard.team01.prison.gang yard-team01-prison-gang
+10.69.10.12 cafeteria.team01.prison.gang cafeteria-team01-prison-gang
+10.69.10.13 shower.team01.prison.gang shower-team01-prison-gang
+10.69.10.14 cell.team01.prison.gang cell-team01-prison-gang
+
+# blue02-net
+10.69.20.10 warden.team02.prison.gang warden-team02-prison-gang team02.prison.gang
+10.69.20.11 yard.team02.prison.gang yard-team02-prison-gang
+10.69.20.12 cafeteria.team02.prison.gang cafeteria-team02-prison-gang
+10.69.20.13 shower.team02.prison.gang shower-team02-prison-gang
+10.69.20.14 cell.team02.prison.gang cell-team02-prison-gang

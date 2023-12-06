@@ -1,0 +1,10 @@
+# vim: set filetype=yaml.ansible:
+---
+dependencies:
+  - name: geerlingguy.docker
+    vars:
+      ansible_become: true
+      docker_packages_state: latest
+      docker_install_compose_plugin: true
+      docker_users:
+        - "{{ ansible_user }}"

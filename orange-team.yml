@@ -1,0 +1,7 @@
+# vim: set filetype=yaml.ansible:
+---
+- name: Deploy the competition
+  tasks:
+    - scoring.yml
+    - linux.yml
+    # - windows.yml

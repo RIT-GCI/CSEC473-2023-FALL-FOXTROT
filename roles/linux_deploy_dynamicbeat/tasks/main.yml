@@ -1,0 +1,53 @@
+# vim: set filetype=yaml.ansible:
+---
+- name: Sysctl ICMP
+  ansible.posix.sysctl:
+    name: net.ipv4.ping_group_range
+    value: "0   2147483647"
+    state: present
+    sysctl_set: true
+
+- name: Make dynamicbeat folder
+  become: true
+  ansible.builtin.file:
+    path: /opt/dynamicbeat/
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy dynamicbeat binary
+  become: true
+  ansible.builtin.copy:
+    src: dynamicbeat
+    dest: /opt/dynamicbeat/dynamicbeat
+    owner: root
+    group: root
+    mode: "0755"
+  notify:
+    - Reload systemd
+
+- name: Copy dynamicbeat.yml
+  become: true
+  ansible.builtin.copy:
+    src: dynamicbeat.yml
+    dest: /opt/dynamicbeat/dynamicbeat.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy dynamicbeat.service
+  become: true
+  ansible.builtin.copy:
+    src: dynamicbeat.service
+    dest: /etc/systemd/system/dynamicbeat.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+
+- name: Setup dynamicbeat
+  ansible.builtin.command:
+    cmd: /opt/dynamicbeat/dynamicbeat setup --config /opt/dynamicbeat/dynamicbeat.yml
+  changed_when: true

@@ -1,0 +1,15 @@
+{
+  "name": "Cell-ICMP",
+  "type": "icmp",
+  "score_weight": 1,
+  "definition": {
+    "Host": "{{.Host}}",
+    "Count": 2,
+    "Percent": 50
+  },
+  "attributes": {
+    "admin": {
+      "Host": "cell.team{{.TeamNum}}.prison.gang"
+    }
+  }
+}

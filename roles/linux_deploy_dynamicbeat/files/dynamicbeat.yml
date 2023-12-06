@@ -1,0 +1,70 @@
+### Dynamicbeat Example Configuration #########################################
+# This configuration file explains all available configuration settings. Each
+# setting is listed here with its default. If you would like to change one of
+# the defaults, uncomment the setting and change the value.
+#
+# Please note that the defaults listed here should work fine for a default
+# Scorestack small/docker instance deployed on the same host as Dynamicbeat.
+
+###
+
+# The amount of time to wait after starting a round of checks before starting
+# another round. Must be a string parsable by Golang's time.ParseDuration. See
+# here for more information: https://golang.org/pkg/time/#ParseDuration
+round_time: 30s
+
+# The address to the Elasticsearch endpoint of your Scorestack instance. Check
+# definitions will be loaded from here, and check results will be put here.
+elasticsearch: http://scoring.prison.gang:9200
+
+# The credentials to use for authentication to Elasticsearch when running
+# checks with Dynamicbeat. This user must have the `dynamicbeat` role.
+username: elastic
+password: iece4Yoh7chaiJeechu3aiph
+
+# Whether to check the validity of TLS certificates used by your Scorestack
+# instance.
+verify_certs: false
+
+### Logging ###################################################################
+
+log:
+  # Whether to include timestamps and code locations in each log line.
+  verbose: true
+
+  # The lowest log level to print. -1 is DEBUG, 0 is INFO, 1 is WARN, etc.
+  level: 0
+
+  # Whether to colorize the log output. By default, logs will be printed with
+  # color.
+  no_color: false
+
+### Setup #####################################################################
+# The remaining settings are only used by Dynamicbeat's `setup` command and the
+# subcommands of `setup`. If this Dynamicbeat deployment will only use the
+# `run` command, then you can leave these settings as is.
+
+setup:
+  # The address to the Kibana endpoint of your Scorestack instance that will be
+  # configured by Dynamicbeat.
+  kibana: http://scoring.prison.gang:5601
+
+  # The credentials to use for authentication to Elasticsearch and Kibana when
+  # running cluster setup. This user must have the `superuser` role.
+  username: elastic
+  password: iece4Yoh7chaiJeechu3aiph
+
+### Teams #####################################################################
+teams:
+  - name: team01
+    overrides:
+      TeamName: "team01"
+      TeamNum: "01"
+      Subnet: "10"
+
+  - name: team02
+    overrides:
+      TeamName: team02
+      TeamNum: "02"
+      Subnet: "20"
+# vim: set filetype=yaml:

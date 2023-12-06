@@ -1,0 +1,25 @@
+{
+  "name": "Shower-hMail",
+  "type": "smtp",
+  "score_weight": 1,
+  "definition": {
+    "Host": "{{.Host}}",
+    "Username": "{{.User}}@{{.Domain}}",
+    "Password": "{{.Password}}",
+    "Sender": "{{.User}}@{{.Domain}}",
+    "Reciever": "{{.Reciever}}@{{.Domain}}",
+    "Body": "{{.Message}}"
+  },
+  "attributes": {
+    "admin": {
+      "Host": "shower.team{{.TeamNum}}.prison.gang",
+      "Domain": "team{{.TeamNum}}.prison.gang",
+      "User": "prisoner",
+      "Reciever": "warden",
+      "Message": "I would put a cow saying Moo here but I don't think scorestack would like me too much..."
+    },
+    "User": {
+      "Password": "Change.me123!"
+    }
+  }
+}

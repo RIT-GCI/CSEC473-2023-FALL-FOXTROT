@@ -1,0 +1,5 @@
+# vim: set filetype=yaml.ansible:
+---
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon-reload: true

@@ -1,0 +1,50 @@
+# vim: set filetype=yaml.ansible
+---
+# Paul Vickers
+
+# Install Apache2
+- name: Install Apache
+  ansible.builtin.apt:
+    name: apache2
+    update_cache: true
+    force: true
+    state: present
+
+# Creates directory if DNE to store html content for webpages
+- name: Create Domain Document Root
+  ansible.builtin.file:
+    path: "/var/www/{{ domain_name }}"
+    state: directory
+    mode: "755"
+
+# Copies over custom index.html file into document root above
+- name: Copy Over Default Index File
+  ansible.builtin.template:
+    src: "../files/default-index.html"
+    dest: "/var/www/{{ domain_name }}/index.html"
+    mode: "644"
+
+# Copies over config file to be used when running the site
+- name: Copy Over Config File
+  ansible.builtin.template:
+    src: "../files/default-config.conf"
+    dest: "/etc/apache2/sites-available/{{ config_file }}"
+    mode: "644"
+
+# Turns the site on using config file above
+- name: Turn Site On
+  ansible.builtin.command:
+    cmd: a2ensite {{ config_file }}
+  changed_when: true
+
+# Turns the default site off so that our site shows
+- name: Turn Default Site Off
+  ansible.builtin.command:
+    cmd: a2dissite 000-default
+  changed_when: true
+
+# Restarts service to display our page
+- name: Restart Apache Service
+  ansible.builtin.service:
+    name: apache2
+    state: restarted

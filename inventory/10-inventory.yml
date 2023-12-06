@@ -1,0 +1,66 @@
+# vim: set filetype=yaml.ansible
+---
+all:
+  vars:
+    # default values for the variables
+    subnet: "PlaceHolder"
+    team_number: "PlaceHolder"
+  children:
+    warden:
+      vars:
+        ansible_host: "10.69.{{ subnet|int }}.10"
+      hosts:
+        warden.team[01:02].prison.gang:
+
+    yard:
+      vars:
+        ansible_host: "10.69.{{ subnet|int }}.11"
+        http_port: "80" # Default port to run it on - keep at 80 in most cases
+        domain_name: "yard.prison.com"
+        config_file: "yard.prison.com.conf"
+        admin: "warden@yard"
+      hosts:
+        yard.team[01:02].prison.gang:
+
+    cafeteria:
+      vars:
+        ansible_host: "10.69.{{ subnet|int }}.12"
+      hosts:
+        cafeteria.team[01:02].prison.gang:
+
+    shower:
+      vars:
+        ansible_host: "10.69.{{ subnet|int }}.13"
+      hosts:
+        shower.team[01:02].prison.gang:
+
+    cell:
+      vars:
+        ansible_host: "10.69.{{ subnet|int }}.14"
+      hosts:
+        cell.team[01:02].prison.gang:
+
+    scoring:
+      vars:
+        ansible_host: "10.69.100.20"
+      hosts:
+        scoring.prison.gang:
+
+    beat:
+      vars:
+        ansible_host: "10.69.100.30"
+      hosts:
+        beat.prison.gang:
+
+    linux:
+      children:
+        scoring:
+        beat:
+        yard:
+        cafeteria:
+
+    windows:
+      children:
+        cell:
+        shower:
+        warden:

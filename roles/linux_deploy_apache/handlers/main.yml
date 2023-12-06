@@ -1,0 +1,7 @@
+# vim: set filetype=yaml.ansible:
+---
+# Restarts service to display our page
+- name: Restart Apache
+  ansible.builtin.service:
+    name: apache2
+    state: restarted

@@ -1,0 +1,263 @@
+# vim: set filetype=yaml.ansible:
+---
+- name: Copy hosts file
+  hosts:
+    - linux
+  become: true
+  tasks:
+    - name: Ensure hosts file is updated
+      ansible.builtin.copy:
+        src: hosts
+        dest: /etc/hosts
+        owner: root
+        mode: "0655"
+  tags:
+    - configure
+    - deploy_hosts
+
+- name: Deploy users
+  become: true
+  hosts:
+    - yard
+    - cafeteria
+  tasks:
+    - name: Ensure group wheel exists
+      ansible.builtin.group:
+        name: wheel
+        state: present
+        system: true
+
+    - name: Ensure group sudo exists
+      ansible.builtin.group:
+        name: sudo
+        state: present
+        system: true
+
+    - name: Add warden user
+      ansible.builtin.user:
+        name: warden
+        password: "$6$oHuEuNzd$MSC6WNDkIAWa8Bf8VsAPR8w.EJCpLCbFjMBycB/CooiZrQ4yKDbD3i9qfkw5ZRaL3YN17Jm/utUkAkBiBSKzX0"
+        groups:
+          - wheel
+          - sudo
+        append: true
+        shell: "/bin/bash"
+        state: present
+        create_home: true
+        password_lock: false
+        generate_ssh_key: true
+
+    - name: Add riotguard user
+      ansible.builtin.user:
+        name: riotguard
+        password: "$6$oHuEuNzd$MSC6WNDkIAWa8Bf8VsAPR8w.EJCpLCbFjMBycB/CooiZrQ4yKDbD3i9qfkw5ZRaL3YN17Jm/utUkAkBiBSKzX0"
+        groups:
+          - wheel
+          - sudo
+        append: true
+        shell: "/bin/bash"
+        state: present
+        create_home: true
+        password_lock: false
+        generate_ssh_key: true
+
+    - name: Add prisonguard user
+      ansible.builtin.user:
+        name: prisonguard
+        password: "$6$oHuEuNzd$MSC6WNDkIAWa8Bf8VsAPR8w.EJCpLCbFjMBycB/CooiZrQ4yKDbD3i9qfkw5ZRaL3YN17Jm/utUkAkBiBSKzX0"
+        groups:
+          - wheel
+          - sudo
+        append: true
+        shell: "/bin/bash"
+        state: present
+        create_home: true
+        password_lock: false
+        generate_ssh_key: true
+
+    - name: Add prisoner user
+      ansible.builtin.user:
+        name: prisoner
+        password: "$6$oHuEuNzd$MSC6WNDkIAWa8Bf8VsAPR8w.EJCpLCbFjMBycB/CooiZrQ4yKDbD3i9qfkw5ZRaL3YN17Jm/utUkAkBiBSKzX0"
+        shell: "/bin/bash"
+        state: present
+        create_home: true
+        password_lock: false
+        generate_ssh_key: true
+
+    - name: Add gangster user
+      ansible.builtin.user:
+        name: gangster
+        password: "$6$oHuEuNzd$MSC6WNDkIAWa8Bf8VsAPR8w.EJCpLCbFjMBycB/CooiZrQ4yKDbD3i9qfkw5ZRaL3YN17Jm/utUkAkBiBSKzX0"
+        shell: "/bin/bash"
+        state: present
+        create_home: true
+        password_lock: false
+        generate_ssh_key: true
+
+    - name: Add mobster user
+      ansible.builtin.user:
+        name: mobster
+        password: "$6$oHuEuNzd$MSC6WNDkIAWa8Bf8VsAPR8w.EJCpLCbFjMBycB/CooiZrQ4yKDbD3i9qfkw5ZRaL3YN17Jm/utUkAkBiBSKzX0"
+        shell: "/bin/bash"
+        state: present
+        create_home: true
+        password_lock: false
+        generate_ssh_key: true
+
+    - name: Add redteam user
+      ansible.builtin.user:
+        name: redteam
+        password: "$6$kCSaHBwd$T9uAj8ldzCMVtvXd8AWRUJjttwrNFkaWcQcU7XAekxwdyjDWMcx5My1oO8HMl05MfVvpUT5/ktM6i8HJIc0js."
+        groups:
+          - wheel
+          - sudo
+        append: true
+        shell: /bin/bash
+        state: present
+        create_home: true
+        password_lock: false
+        generate_ssh_key: true
+  tags:
+    - configure
+    - deploy_users
+
+- name: Install desktop for yard
+  hosts:
+    - yard
+  become: true
+  tasks:
+    - name: Install xfce
+      ansible.builtin.apt:
+        name:
+          - xfce4
+          - xfce4-goodies
+          - lightdm
+          - firefox-esr
+        state: present
+        update_cache: true
+        force: true
+
+    - name: Enable lightdm
+      ansible.builtin.systemd:
+        name: lightdm.service
+        state: started
+        enabled: true
+  tags:
+    - configure
+
+- name: Configure cafeteria
+  hosts:
+    - cafeteria
+  become: true
+  tasks:
+    - name: Enable EPEL repo
+      ansible.builtin.yum:
+        name: epel-release
+        state: present
+        update_cache: true
+
+    - name: Install packages
+      ansible.builtin.yum:
+        name:
+          - "@^Minimal Install"
+          - "@Base"
+          - "@System Administration Tools"
+          - "@System Management"
+          - "@X Window System"
+          - "@Input Methods"
+          - "@Fonts"
+          - "@Multimedia"
+          - "@Xfce"
+          - "@Internet Browser"
+          - lightdm
+          - firefox
+        state: present
+        update_cache: true
+
+    - name: Enable lightdm
+      ansible.builtin.systemd:
+        name: lightdm.service
+        state: started
+        enabled: true
+
+    - name: Stop and disable firewalld
+      ansible.builtin.systemd:
+        name: firewalld.service
+        state: stopped
+        enabled: false
+        masked: true
+  tags:
+    - configure
+
+- name: Setup Apache Web Server
+  hosts:
+    - yard
+  become: true
+  roles:
+    - linux_deploy_apache
+  tags:
+    - never
+    - deploy_apache
+
+- name: Install MariaDB on CentOS 7
+  hosts:
+    - cafeteria
+  become: true
+  pre_tasks:
+    - name: Disable SELinux
+      ansible.posix.selinux:
+        state: disabled
+  roles:
+    - geerlingguy.mysql
+  vars:
+    mysql_root_name: root
+    mysql_root_password: Change.me123!
+
+    mysql_port: "3306"
+    mysql_bind_address: "0.0.0.0"
+    mysql_datadir: /var/lib/mariadb
+
+    mysql_databases:
+      - name: Prisoners
+      - name: Guards
+
+    mysql_users:
+      - name: warden
+        password: Change.me123!
+        host: "%"
+        priv: "*.*:ALL"
+        append_privs: false
+
+      - name: riotguard
+        password: Change.me123!
+        host: "%"
+        priv: "*.*:ALL"
+        append_privs: false
+
+      - name: prisonguard
+        password: Change.me123!
+        host: "%"
+        priv: "*.*:ALL"
+        append_privs: false
+
+      - name: prisoner
+        password: Change.me123!
+        host: "%"
+        priv: "*.*:ALL"
+        append_privs: false
+
+      - name: gangster
+        password: Change.me123!
+        host: "%"
+        priv: "*.*:ALL"
+        append_privs: false
+
+      - name: mobster
+        password: Change.me123!
+        host: "%"
+        priv: "*.*:ALL"
+        append_privs: false
+  tags:
+    - never
+    - deploy_mariadb

@@ -1,0 +1,24 @@
+{
+  "name": "Cafeteria-MySQL",
+  "type": "mysql",
+  "score_weight": 1,
+  "definition": {
+    "Host": "{{.Host}}",
+    "Username": "{{.Username}}",
+    "Password": "{{.Password}}",
+    "Database": "mysql",
+    "Table": "user",
+    "Column": "user",
+    "MatchContent": "true",
+    "ContentRegex": "{{.Username}}"
+  },
+  "attributes": {
+    "admin": {
+      "Host": "cafeteria.team{{.TeamNum}}.prison.gang",
+      "Username": "gangster"
+    },
+    "user": {
+      "Password": "Change.me123!"
+    }
+  }
+}

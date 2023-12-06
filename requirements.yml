@@ -1,0 +1,10 @@
+# vim: set filetype=yaml.ansible:
+---
+collections:
+  - name: ansible.posix
+  - name: community.docker
+  - name: community.mysql
+
+roles:
+  - name: geerlingguy.docker
+  - name: geerlingguy.mysql

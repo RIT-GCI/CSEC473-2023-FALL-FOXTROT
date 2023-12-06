@@ -1,0 +1,109 @@
+# vim: set filetype=yaml.ansible:
+---
+- name: Install dependencies
+  become: true
+  ansible.builtin.package:
+    name:
+      - git
+    state: present
+
+- name: Increase maximum number of memory map areas
+  become: true
+  ansible.posix.sysctl:
+    name: vm.max_map_count
+    value: 262144
+    state: present
+    sysctl_set: true
+
+- name: Clone Scorestack repository
+  ansible.builtin.git:
+    repo: https://github.com/scorestack/scorestack.git
+    dest: scorestack
+    version: dac42cf
+    force: true
+
+- name: Configure Scorestack JVM arguments
+  ansible.builtin.copy:
+    src: elasticsearch-memory.jvm.options
+    dest: scorestack/deployment/small/docker/elasticsearch-memory.jvm.options
+    mode: "0644"
+
+- name: Copy Caddyfile
+  ansible.builtin.copy:
+    src: Caddyfile
+    dest: scorestack/deployment/small/docker/Caddyfile
+    mode: "0644"
+
+- name: Copy custom docker-compose.yml
+  ansible.builtin.copy:
+    src: docker-compose.yml
+    dest: scorestack/deployment/small/docker/docker-compose.yml
+    mode: "0644"
+
+- name: Copy elasticsearch.yml
+  ansible.builtin.copy:
+    src: elasticsearch.yml
+    dest: scorestack/deployment/small/docker/elasticsearch.yml
+    mode: "0644"
+
+- name: Copy kibana.yml
+  ansible.builtin.copy:
+    src: kibana.yml
+    dest: scorestack/deployment/small/docker/kibana.yml
+    mode: "0644"
+
+- name: Set proper owner for cloned Scorestack repo
+  ansible.builtin.file:
+    path: scorestack
+    recurse: true
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Validate Scorestack compose file
+  become: true
+  ansible.builtin.command:
+    cmd: docker compose --file docker-compose.yml config --quiet
+    chdir: scorestack/deployment/small/docker/
+  changed_when: false
+
+- name: Pull Elasticsearch and Kibana images
+  become: true
+  ansible.builtin.command:
+    cmd: docker compose --ansi never --progress plain --file docker-compose.yml pull
+    chdir: scorestack/deployment/small/docker/
+  register: compose_pull
+  changed_when: "'Downloading' in compose_pull.stderr"
+
+- name: Stop Scorestack containers if running
+  become: true
+  ansible.builtin.command:
+    cmd: docker compose --ansi never --progress plain --file docker-compose.yml down
+    chdir: scorestack/deployment/small/docker/
+  register: compose_down
+  changed_when: "'Stopped' in compose_down.stderr"
+
+- name: Delete old certificates
+  ansible.builtin.file:
+    path: scorestack/deployment/small/docker/certificates
+    state: absent
+
+- name: Remove old .env file
+  ansible.builtin.file:
+    path: scorestack/deployment/small/docker/.env
+    state: absent
+
+- name: Start Scorestack containers
+  become: true
+  ansible.builtin.command:
+    cmd: docker compose --ansi never --progress plain --file docker-compose.yml up -d
+    chdir: scorestack/deployment/small/docker/
+  register: compose_up
+  changed_when: "'Started' in compose_up.stderr"
+
+- name: Copy clear scorestack script
+  ansible.builtin.copy:
+    src: clear_scorestack.sh
+    dest: clear_scorestack.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
